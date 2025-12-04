@@ -1,0 +1,197 @@
+-- Listar o primeiro e o último nome dos funcionários (tabela employees) e o nome do departamento (department_name) em que trabalham.
+
+select first_name, last_name, department_name
+from employees E inner join departments D
+on E.department_id = D.department_id;
+
+-- Listar o primeiro e o último nome dos funcionários e o título da função (job_title) que exercem ordenando em ordem alfabética 
+-- pelo primeiro nome.
+
+select first_name, last_name, job_title
+from employees E inner join jobs J
+on E.job_id = J.job_id
+order by E.first_name;
+
+-- Listar o primeiro e o último nome dos funcionários, o nome do departamento em que trabalham,
+-- o título da função que exercem e o salário. Mostre no resultado apenas os funcionários que ganham mais do que 5000. 
+-- Ordene o resultado em ordem alfabética pelo primeiro nome e pelo nome do departamento. Dica: você precisará consultar as tabelas Employees, Departments e Jobs.
+
+select first_name, last_name, department_name, job_title, salary
+from employees E inner join jobs J 
+on E.job_id = J.job_id
+inner join departments D
+on E.department_id = D.department_id 
+where salary > 5000
+order by E.first_name, D.department_name;
+
+-- Listar o nome dos departamentos, o nome das respectivas cidades e estados (city e state_province) onde estão localizados
+-- e também o nome do país (country_name). Dica: você precisará consultar as tabelas Departaments, Locations e Countries.
+
+select department_name, city, state_province, country_name
+from departments D inner join locations L
+on D.location_id = L.location_id
+inner join countries C
+on L.country_id = C.country_id;
+
+
+-- Listar todos os dados dos funcionários que trabalham nos países France ou Germany. 
+-- Dica: você precisará consultar as tabelas Employees, Departments, Locations e Countries.
+select DISTINCT *
+from employees E inner join departments D
+on  E.department_id = D.department_id
+inner join locations L
+on D.location_id = L.location_id
+inner join countries C
+on L.country_id = C.country_id
+where C.country_name = 'France' or C.country_name ='Germany';
+
+
+
+-- Escreva o comando SQL para mostrar qual é o maior e o menor salário dos funcionários.
+
+select 
+MAX(salary) as maior_salario,
+MIN(salary) as menor_salario
+from employees;
+
+
+
+-- Escreva o comando SQL para mostrar qual é a média de salários dos funcionários.
+select AVG(salary)
+from employees;
+
+-- Escreva o comando SQL para mostrar quantos funcionários há na empresa.
+
+select count(job_id -- ou (*)
+)
+from employees;
+
+-- Escreva o comando SQL para mostrar qual é a soma de salários dos funcionários.
+select sum(salary)
+from employees;
+
+-- Escreva o comando SQL para apresentar o nome completo (concatenar first_name e last_name) dos empregados que figuram em primeiro e em último lugar
+-- na lista de funcionários que está em ordem alfabética.
+
+select concat(first_name,' ', last_name) as nome_completo
+from employees
+where first_name = (select max(first_name) from employees	)
+or first_name = (select min(first_name) from employees);
+
+-- Escreva o comando SQL para mostrar qual o maior, o menor e a média de salários dos funcionários que trabalham nos departamentos 50, 60, 70 e 80.
+-- Apelide as colunas para Menor, Maior e Média.
+
+select max(salary) as Maximo, min(salary) as Minimo, avg(salary) as Média
+from employees 
+where department_id in (50,60,70,80);
+
+-- Escreva o comando SQL para mostrar quantas funções (job_id) diferentes há na tabela de funcionários?
+
+select count(DISTINCT(job_id)) as Funções
+from jobs;
+
+
+-- Listar o primeiro nome, último nome e o título do trabalho (job_title) de todos os funcionários que trabalham no departamento 30.
+
+select Concat(first_name,' ', last_name) as Nome_Completo, job_title
+from employees E inner join jobs J
+on E.job_id = J.job_id
+where department_id = 30;
+
+-- Mostrar o maior salário, o menor salário e a média de salários de todos os funcionários da tabela
+
+select 
+MAX(salary) as Salario_Maximo,
+MIN(salary) as Salario_Minimo,
+AVG(salary) as Media_Salario
+from employees;
+
+-- Listar o nome completo (concat first_name e last_name), department_name e salary de todos os funcionários que ganham mais de 7000,
+-- ordenando pelo salário em ordem decrescente
+
+select concat(first_name,' ',last_name) as Nome_Completo, salary as Salario
+from employees
+where salary > 7000
+order by salary DESC;
+
+-- Mostrar quantos departamentos diferentes existem e quantos funcionários diferentes existem por cargo
+
+select count(distinct(department_id)) as Quant_Departamento, count(distinct(job_title)) as Quant_Cargo
+from employees E inner join jobs J
+on E.job_id = J.job_id;
+
+
+-- Mostrar o nome do departamento, o país (country_name) e a soma de salários de todos os funcionários,
+-- apenas para departamentos que têm salário médio maior que 5000, ordenando pelo país.
+
+select
+department_name,
+country_name,
+SUM(salary) AS total_salario
+FROM employees E
+INNER JOIN departments D ON E.department_id = D.department_id
+INNER JOIN locations L ON D.location_id = L.location_id
+INNER JOIN countries C ON L.country_id = C.country_id
+GROUP BY department_name, country_name
+HAVING AVG(salary) > 5000
+ORDER BY country_name;
+
+-- Listar os nomes e salários de todos os empregados ordenados do maior para o menor salário
+select first_name, last_name, salary
+from employees
+order by salary desc;
+
+-- Exibir o nome completo (first_name + last_name) e o e-mail de todos os empregados contratados após 1º de janeiro de 2005
+select concat(first_name, ' ', last_name) as nome_completo, email
+from employees
+where hire_date > '2005-01-01';
+
+-- Mostrar todos os cargos (job_id) distintos existentes na tabela employees
+select distinct job_id
+from employees;
+
+-- Listar os nomes dos empregados cujo sobrenome termina com 's' e cujo salário é superior a 8000
+select first_name, last_name, salary
+from employees
+where last_name like '%s'
+and salary > 8000;
+
+-- Listar o nome do empregado, o nome do departamento e o nome do cargo de cada funcionário
+select concat(E.first_name, ' ', E.last_name) as nome_completo,D.department_name,J.job_title
+from employees E
+inner join departments D on E.department_id = D.department_id
+inner join jobs J on E.job_id = J.job_id;
+
+-- Exibir o nome do departamento e o nome do gerente responsável por ele
+select D.department_name,concat(E.first_name, ' ', E.last_name) as gerente
+from departments D
+inner join employees E on D.manager_id = E.employee_id;
+
+-- Listar o nome do empregado, o salário e o nome da cidade onde ele trabalha
+select concat(E.first_name, ' ', E.last_name) as nome_completo, E.salary,L.city
+from employees E
+inner join departments D on E.department_id = D.department_id
+inner join locations L on D.location_id = L.location_id;
+
+-- Mostrar o nome e o país de todos os departamentos
+select D.department_name,C.country_name
+from departments D
+inner join locations L on D.location_id = L.location_id
+inner join countries C on L.country_id = C.country_id;
+
+-- Exibir o nome do departamento e a soma dos salários pagos aos seus empregados.
+select D.department_name,sum(E.salary) as total_salarios
+from employees E
+inner join departments D on E.department_id = D.department_id
+group by D.department_name;
+
+
+
+
+
+
+
+
+
+
+
