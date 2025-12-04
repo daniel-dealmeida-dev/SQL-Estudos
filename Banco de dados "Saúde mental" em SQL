@@ -1,0 +1,139 @@
+-- Banco de dados
+CREATE DATABASE saude_mental;
+USE saude_mental;
+
+-- Tabela usuario
+CREATE TABLE usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(100) NOT NULL,
+    tipo_usuario VARCHAR(20),
+    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela perfil
+CREATE TABLE perfil (
+    id_perfil INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    descricao TEXT,
+    idade INT,
+    genero VARCHAR(20),
+    cidade VARCHAR(50),
+    estado_emocional_atual VARCHAR(50),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+);
+
+-- Tabela atendimento
+CREATE TABLE atendimento (
+    id_atendimento INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_profissional INT NOT NULL,
+    data_horario DATETIME,
+    status VARCHAR(20),
+    tipo_atendimento VARCHAR(20),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
+    FOREIGN KEY (id_profissional) REFERENCES usuario(id_usuario)
+);
+
+-- Tabela avaliacao
+CREATE TABLE avaliacao (
+    id_avaliacao INT AUTO_INCREMENT PRIMARY KEY,
+    id_atendimento INT NOT NULL,
+    nota INT,
+    comentario TEXT,
+    data_avaliacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_atendimento) REFERENCES atendimento(id_atendimento)
+);
+
+-- Tabela conteudo
+CREATE TABLE conteudo (
+    id_conteudo INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(150) NOT NULL,
+    tipo VARCHAR(50),
+    descricao TEXT,
+    url VARCHAR(255),
+    data_publicacao DATE
+);
+
+-- Tabela emocional
+CREATE TABLE emocional (
+    id_emocional INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    data_registro DATE,
+    nivel_estresse INT,
+    humor VARCHAR(50),
+    observacoes TEXT,
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+);
+
+-- Tabela mensagem
+CREATE TABLE mensagem (
+    id_mensagem INT AUTO_INCREMENT PRIMARY KEY,
+    id_remetente INT NOT NULL,
+    id_destinatario INT NOT NULL,
+    conteudo TEXT,
+    data_envio DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_remetente) REFERENCES usuario(id_usuario),
+    FOREIGN KEY (id_destinatario) REFERENCES usuario(id_usuario)
+);
+
+-- Tabela postagem
+CREATE TABLE postagem (
+    id_postagem INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    conteudo TEXT,
+    data_postagem DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+);
+
+-- Inserts de usuarios
+INSERT INTO usuario (nome, email, senha, tipo_usuario)
+VALUES
+('Ana Souza', 'ana@email.com', '123', 'jovem'),
+('Dr. Paulo Mendes', 'paulo@email.com', 'abc', 'profissional'),
+('Maria Silva', 'maria@email.com', 'senha', 'voluntario');
+
+-- Inserts de perfis
+INSERT INTO perfil (id_usuario, descricao, idade, genero, cidade, estado_emocional_atual)
+VALUES
+(1, 'Estudante do ensino médio', 17, 'Feminino', 'São Paulo', 'Ansiosa'),
+(2, 'Psicólogo especializado em jovens', 38, 'Masculino', 'Curitiba', 'Motivado');
+
+-- Inserts de conteudo
+INSERT INTO conteudo (titulo, tipo, descricao, url)
+VALUES
+('Dicas de autocuidado', 'artigo', 'Técnicas para relaxar e cuidar da saúde mental.', 'https://exemplo.com/artigo1'),
+('Meditação guiada', 'vídeo', 'Exercícios de respiração e foco.', 'https://exemplo.com/video1');
+
+-- Inserts de atendimento
+INSERT INTO atendimento (id_usuario, id_profissional, data_horario, status, tipo_atendimento)
+VALUES
+(1, 2, '2025-11-15 15:00:00', 'agendado', 'vídeo'),
+(1, 2, '2025-11-01 14:00:00', 'concluido', 'texto');
+
+-- Insert de avaliacao
+INSERT INTO avaliacao (id_atendimento, nota, comentario)
+VALUES
+(2, 5, 'Atendimento ótimo!');
+
+-- Inserts emocionais
+INSERT INTO emocional (id_usuario, data_registro, nivel_estresse, humor, observacoes)
+VALUES
+(1, '2025-11-09', 6, 'Cansada', 'Semana de provas'),
+(1, '2025-11-10', 4, 'Tranquila', 'Melhorando após o atendimento');
+
+-- Inserts de mensagens
+INSERT INTO mensagem (id_remetente, id_destinatario, conteudo)
+VALUES
+(1, 2, 'Olá doutor, quero marcar uma sessão.'),
+(2, 1, 'Claro Ana, sexta às 15h pode ser.');
+
+-- Inserts de postagens
+INSERT INTO postagem (id_usuario, conteudo)
+VALUES
+(1, 'Alguém mais fica nervoso antes das provas?'),
+(3, 'Sim, faço respiração e ajuda muito.');
+
+-- Listar tabelas
+SHOW TABLES;
